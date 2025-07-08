@@ -20,6 +20,7 @@ public class HueColorSlider : SKCanvasView
     public HueColorSlider()
     {
         IgnorePixelScaling = true;
+        EnableTouchEvents = true;
         HeightRequest = ComponentHeight;
         
         for (var i = 0; i < _colors.Length; i++)
@@ -38,6 +39,29 @@ public class HueColorSlider : SKCanvasView
 
         DrawComponent();
     }
+
+    protected override void OnTouch(SKTouchEventArgs e)
+    {
+        base.OnTouch(e);
+
+        switch (e.ActionType)
+        {
+            case SKTouchAction.Pressed:
+                HandlePressedTouchAction(e.Location);
+                break;
+            case SKTouchAction.Moved:
+                HandleMovedTouchAction(e.Location);
+                break;
+            case SKTouchAction.Released:
+            case SKTouchAction.Cancelled:
+                HandleReleasedTouchAction();
+                break;
+        }
+
+        e.Handled = true;
+    }
+
+    #region Drawing Methods
 
     private void DrawComponent()
     {
@@ -103,4 +127,22 @@ public class HueColorSlider : SKCanvasView
         _canvas.DrawCircle(thumbCenterX, thumbCenterY, ThumbRadius, fillPaint);
         _canvas.DrawCircle(thumbCenterX, thumbCenterY, ThumbRadius - ThumbBorderThickness / 2, borderPaint);
     }
+    
+    #endregion Drawing Methods
+    
+    #region Touch Events
+
+    private void HandlePressedTouchAction(SKPoint location)
+    {
+    }
+
+    private void HandleMovedTouchAction(SKPoint location)
+    {
+    }
+
+    private void HandleReleasedTouchAction()
+    {
+    }
+    
+    #endregion Touch Events
 }
