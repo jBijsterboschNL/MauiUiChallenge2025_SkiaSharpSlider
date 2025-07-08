@@ -79,5 +79,28 @@ public class HueColorSlider : SKCanvasView
 
     private void DrawThumb()
     {
+        // create painting for our thumb inner circle and the border
+        using SKPaint fillPaint = new()
+        {
+            Style = SKPaintStyle.Fill,
+            IsStroke = false,
+            IsAntialias = true,
+            Color = SKColors.White
+        };
+        using SKPaint borderPaint = new()
+        {
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = ThumbBorderThickness,
+            IsAntialias = true,
+            Color = SKColors.Black
+        };
+        
+        // calculate the center position of our thumb
+        var thumbCenterX = _actualWidth / 2;
+        var thumbCenterY = _actualHeight / 2;
+
+        // draw the thumb's inner circle and border
+        _canvas.DrawCircle(thumbCenterX, thumbCenterY, ThumbRadius, fillPaint);
+        _canvas.DrawCircle(thumbCenterX, thumbCenterY, ThumbRadius - ThumbBorderThickness / 2, borderPaint);
     }
 }
