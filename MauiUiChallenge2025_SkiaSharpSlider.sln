@@ -1,0 +1,16 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiUiChallenge2025_SkiaSharpSlider", "src/MauiUiChallenge2025_SkiaSharpSlider/MauiUiChallenge2025_SkiaSharpSlider.csproj", "{597EF141-8030-4537-ADF3-E01DD4C21988}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{597EF141-8030-4537-ADF3-E01DD4C21988}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{597EF141-8030-4537-ADF3-E01DD4C21988}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{597EF141-8030-4537-ADF3-E01DD4C21988}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{597EF141-8030-4537-ADF3-E01DD4C21988}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
