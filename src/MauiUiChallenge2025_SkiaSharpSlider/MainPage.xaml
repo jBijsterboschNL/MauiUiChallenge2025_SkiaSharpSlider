@@ -3,12 +3,47 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:MauiUiChallenge2025_SkiaSharpSlider.Components"
+    xmlns:converters="clr-namespace:MauiUiChallenge2025_SkiaSharpSlider.Converters"
     x:Class="MauiUiChallenge2025_SkiaSharpSlider.MainPage">
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            
+            <converters:ColorToTransparencyConverter
+                x:Key="ColorToTransparencyConverter" />
+            
+            <converters:ColorToHexTextConverter
+                x:Key="ColorToHexTextConverter" />
+            
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-    <Grid>
+    <Grid
+        BackgroundColor="{Binding
+            Source={Reference hslColorSlider},
+            Path=SelectedColor,
+            Converter={StaticResource ColorToTransparencyConverter}}">
         
-        <components:HueColorSlider />
+        <VerticalStackLayout
+            VerticalOptions="Center"
+            Spacing="25">
+                
+            <Label
+                Text="{Binding
+                    Source={Reference hslColorSlider},
+                    Path=SelectedColor,
+                    Converter={StaticResource ColorToHexTextConverter}}"
+                TextColor="{Binding
+                    Source={Reference hslColorSlider},
+                    Path=SelectedColor}}"
+                HorizontalTextAlignment="Center"
+                FontSize="32"
+                FontAttributes="Bold" />
         
+            <components:HueColorSlider
+                x:Name="hslColorSlider" />
+            
+        </VerticalStackLayout>
     </Grid>
 
 </ContentPage>
