@@ -16,6 +16,8 @@ public class HueColorSlider : SKCanvasView
     
     private SKCanvas? _canvas;
     private int _actualWidth, _actualHeight;
+    private float _thumbCenterX, _thumbCenterY;
+    private bool _isHoldingThumb;
 
     public HueColorSlider()
     {
@@ -36,6 +38,13 @@ public class HueColorSlider : SKCanvasView
         _canvas = e.Surface.Canvas;
         _actualWidth = e.Info.Width;
         _actualHeight = e.Info.Height;
+        
+        // calculate the center position of our thumb
+        if (_thumbCenterX is 0 || _thumbCenterY is 0)
+        {
+            _thumbCenterX = _actualWidth / 2;
+            _thumbCenterY = _actualHeight / 2;
+        }
 
         DrawComponent();
     }
@@ -118,14 +127,10 @@ public class HueColorSlider : SKCanvasView
             IsAntialias = true,
             Color = SKColors.Black
         };
-        
-        // calculate the center position of our thumb
-        var thumbCenterX = _actualWidth / 2;
-        var thumbCenterY = _actualHeight / 2;
 
         // draw the thumb's inner circle and border
-        _canvas.DrawCircle(thumbCenterX, thumbCenterY, ThumbRadius, fillPaint);
-        _canvas.DrawCircle(thumbCenterX, thumbCenterY, ThumbRadius - ThumbBorderThickness / 2, borderPaint);
+        _canvas.DrawCircle(_thumbCenterX, _thumbCenterY, ThumbRadius, fillPaint);
+        _canvas.DrawCircle(_thumbCenterX, _thumbCenterY, ThumbRadius - ThumbBorderThickness / 2, borderPaint);
     }
     
     #endregion Drawing Methods
@@ -134,14 +139,30 @@ public class HueColorSlider : SKCanvasView
 
     private void HandlePressedTouchAction(SKPoint location)
     {
+        // check if the touch action is 'on' the thumb (touch location is with the thumb radius of it's center x and y)
+        if (Math.Abs(location.X - _thumbCenterX) > ThumbRadius ||
+            Math.Abs(location.Y - _thumbCenterY) > ThumbRadius)
+            return;
+
+        _isHoldingThumb = true;
     }
 
     private void HandleMovedTouchAction(SKPoint location)
     {
+        // we only want to move the thumb when it's being hold
+        if (!_isHoldingThumb)
+            return;
+        
+        // make sure the thumb center x is not outside the slider bar
+        var thumbCenterX = Math.Min(location.X, _actualWidth - ThumbRadius);
+        _thumbCenterX = Math.Max(thumbCenterX, ThumbRadius);
+        
+        InvalidateSurface();
     }
 
     private void HandleReleasedTouchAction()
     {
+        _isHoldingThumb = false;
     }
     
     #endregion Touch Events
