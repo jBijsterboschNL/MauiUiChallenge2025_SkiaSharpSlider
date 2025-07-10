@@ -18,6 +18,26 @@ public class HueColorSlider : SKCanvasView
     private int _actualWidth, _actualHeight;
     private float _thumbCenterX, _thumbCenterY;
     private bool _isHoldingThumb;
+    
+    #region Bindable Properties
+
+    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(
+        nameof(SelectedColor),
+        typeof(Color),
+        typeof(HueColorSlider),
+        defaultValue: Color.FromArgb("#00FFFF"), // middle of our slider
+        propertyChanged: OnSelectedColorChanged);
+
+    private static void OnSelectedColorChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((HueColorSlider)bindable).UpdateThumbPosition();
+
+    public Color SelectedColor
+    {
+        get => (Color)GetValue(SelectedColorProperty);
+        set => SetValue(SelectedColorProperty, value);
+    }
+    
+    #endregion Bindable Properties
 
     public HueColorSlider()
     {
@@ -39,10 +59,10 @@ public class HueColorSlider : SKCanvasView
         _actualWidth = e.Info.Width;
         _actualHeight = e.Info.Height;
         
-        // calculate the center position of our thumb
+        // initial positioning the thumb location
         if (_thumbCenterX is 0 || _thumbCenterY is 0)
         {
-            _thumbCenterX = _actualWidth / 2;
+            UpdateThumbPosition();
             _thumbCenterY = _actualHeight / 2;
         }
 
@@ -125,7 +145,7 @@ public class HueColorSlider : SKCanvasView
             Style = SKPaintStyle.Stroke,
             StrokeWidth = ThumbBorderThickness,
             IsAntialias = true,
-            Color = SKColors.Black
+            Color = SelectedColor.ToSKColor()
         };
         
         // when the thumb is hold, make the thumb circle and border slightly smaller 
@@ -157,12 +177,8 @@ public class HueColorSlider : SKCanvasView
         // we only want to move the thumb when it's being hold
         if (!_isHoldingThumb)
             return;
-        
-        // make sure the thumb center x is not outside the slider bar
-        var thumbCenterX = Math.Min(location.X, _actualWidth - ThumbRadius);
-        _thumbCenterX = Math.Max(thumbCenterX, ThumbRadius);
-        
-        InvalidateSurface();
+
+        UpdateSelectedColor(location);
     }
 
     private void HandleReleasedTouchAction()
@@ -176,4 +192,27 @@ public class HueColorSlider : SKCanvasView
     }
     
     #endregion Touch Events
+
+    private void UpdateSelectedColor(SKPoint location)
+    {
+        SelectedColor = DetermineColorFromThumbLocation(location);
+    }
+
+    private Color DetermineColorFromThumbLocation(SKPoint location)
+        => Color.FromHsla(CalculateHueValueFromThumbLocation(location), 1, 0.5);
+
+    private float CalculateHueValueFromThumbLocation(SKPoint location)
+        => (location.X - ThumbRadius) / (_actualWidth - ThumbRadius * 2);
+
+    private void UpdateThumbPosition()
+    {
+        SelectedColor.ToHsl(out var hue, out var s, out var l);
+        var positionX = _actualWidth * hue;
+        
+        // make sure the thumb center x is not outside the slider bar
+        var thumbCenterX = Math.Min(positionX, _actualWidth - ThumbRadius);
+        _thumbCenterX = Math.Max(thumbCenterX, ThumbRadius);
+        
+        InvalidateSurface();
+    }
 }
