@@ -127,10 +127,13 @@ public class HueColorSlider : SKCanvasView
             IsAntialias = true,
             Color = SKColors.Black
         };
+        
+        // when the thumb is hold, make the thumb circle and border slightly smaller 
+        var thumbRadius = _isHoldingThumb ? ThumbRadius - 2 : ThumbRadius;
 
         // draw the thumb's inner circle and border
-        _canvas.DrawCircle(_thumbCenterX, _thumbCenterY, ThumbRadius, fillPaint);
-        _canvas.DrawCircle(_thumbCenterX, _thumbCenterY, ThumbRadius - ThumbBorderThickness / 2, borderPaint);
+        _canvas.DrawCircle(_thumbCenterX, _thumbCenterY, thumbRadius, fillPaint);
+        _canvas.DrawCircle(_thumbCenterX, _thumbCenterY, thumbRadius - ThumbBorderThickness / 2, borderPaint);
     }
     
     #endregion Drawing Methods
@@ -145,6 +148,8 @@ public class HueColorSlider : SKCanvasView
             return;
 
         _isHoldingThumb = true;
+        
+        InvalidateSurface();
     }
 
     private void HandleMovedTouchAction(SKPoint location)
@@ -162,7 +167,12 @@ public class HueColorSlider : SKCanvasView
 
     private void HandleReleasedTouchAction()
     {
+        if (!_isHoldingThumb)
+            return;
+        
         _isHoldingThumb = false;
+        
+        InvalidateSurface();
     }
     
     #endregion Touch Events
